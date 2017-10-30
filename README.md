@@ -47,7 +47,7 @@ Now fill the required fields to install Save Game Pro Cloud.
 
 When the installation completes, the Save Game Pro Cloud generates a secret key for accessing the API from Unity, so Copy/Paste the code to Unity and make your requests.
 
-Now, place the Save Game Pro installation URL in Unity, for example: http://localhost/php-savegamepro-mongodb/index.php
+Now, place the Save Game Pro installation URL in Unity, for example: http://localhost/php-savegamepro-mysql/index.php
 
 **Notice**: The `index.php` at the end of the URL is required, otherwise all requests will fail.
 
