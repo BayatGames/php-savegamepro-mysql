@@ -66,7 +66,7 @@ $result = $mysqli->query("CREATE TABLE IF NOT EXISTS saves (
   ID bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY UNIQUE KEY COMMENT 'Data Unique ID',
   user_id bigint(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Associated User ID',
   data_key varchar(255) DEFAULT NULL COMMENT 'Key (Identifier)',
-  data_value longblob DEFAULT NULL COMMENT 'Value',
+  data_value longtext DEFAULT NULL COMMENT 'Value',
   FOREIGN KEY (user_id) REFERENCES users (ID) ON DELETE CASCADE ON UPDATE CASCADE
 )");
 if ($result === TRUE) {
