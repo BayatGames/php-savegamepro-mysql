@@ -20,11 +20,11 @@ $action = $_POST['action'];
 $secret_key = $_POST['secret-key'];
 $username = $_POST['username'];
 $password = $_POST['password'];
-$filename = isset($_POST['file-name']) ? $_POST['file-name'] : "";
 $data_key = isset($_POST['data-key']) ? $_POST['data-key'] : false;
 $data_value = isset($_POST['data-value']) ? $_POST['data-value'] : false;
 $type = isset($_POST['type']) ? $_POST['type'] : 'user';
 $create_account = isset($_POST['create-account']) ? true : false;
+$filename = isset($_POST['file-name']) ? $_POST['file-name'] : $data_key;
 
 if ($secret_key !== SECRET_KEY) {
   http_response_code(400);
@@ -83,6 +83,22 @@ if ($result->num_rows === 0) {
 $user = $result->fetch_assoc();
 
 switch ($action) {
+  case 'getfileurl':
+    $filepath = merge_paths(UPLOAD_FOLDER, $username, $filename);
+    if (file_exists($filepath)) {
+      $filepath = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', $filepath);
+      $filepath = str_replace('\\', '/', $filepath);
+      $url = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+      $url .= $_SERVER['HTTP_HOST'] . $filepath;
+      http_response_code(200);
+      echo $url;
+      exit;
+    } else {
+      http_response_code(500);
+      echo "Error: The Requested File does not Exists.";
+      exit;
+    }
+    break;
   case 'uploadfile':
     if (isset($_FILES) && isset($_FILES['file'])) {
       if ($_FILES['file']['error'] == UPLOAD_ERR_OK) {
