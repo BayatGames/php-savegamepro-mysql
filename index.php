@@ -20,6 +20,7 @@ $action = $_POST['action'];
 $secret_key = $_POST['secret-key'];
 $username = $_POST['username'];
 $password = $_POST['password'];
+$filename = isset($_POST['file-name']) ? $_POST['file-name'] : "";
 $data_key = isset($_POST['data-key']) ? $_POST['data-key'] : false;
 $data_value = isset($_POST['data-value']) ? $_POST['data-value'] : false;
 $type = isset($_POST['type']) ? $_POST['type'] : 'user';
@@ -82,6 +83,76 @@ if ($result->num_rows === 0) {
 $user = $result->fetch_assoc();
 
 switch ($action) {
+  case 'uploadfile':
+    if (isset($_FILES) && isset($_FILES['file'])) {
+      if ($_FILES['file']['error'] == UPLOAD_ERR_OK) {
+        $filepath = merge_paths(UPLOAD_FOLDER, $username, $_FILES['file']['name']);
+        if (!file_exists(dirname($filepath))) {
+          mkdir(dirname($filepath), 0777, true);
+        }
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $filepath)) {
+          http_response_code(200);
+          exit("File Successfully Uploaded");
+        } else {
+          http_response_code(500);
+          echo "Error: Upload Failed, maybe the file is invalid or there is some problem with the file.";
+          exit;
+        }
+      } else {
+        http_response_code(500);
+        echo "Error: Upload Failed, here is why: \n";
+        switch ($_FILES['file']['error']) {
+          case UPLOAD_ERR_INI_SIZE:
+            $message = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
+            break;
+          case UPLOAD_ERR_FORM_SIZE:
+            $message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
+            break;
+          case UPLOAD_ERR_PARTIAL:
+            $message = "The uploaded file was only partially uploaded";
+            break;
+          case UPLOAD_ERR_NO_FILE:
+            $message = "No file was uploaded";
+            break;
+          case UPLOAD_ERR_NO_TMP_DIR:
+            $message = "Missing a temporary folder";
+            break;
+          case UPLOAD_ERR_CANT_WRITE:
+            $message = "Failed to write file to disk";
+            break;
+          case UPLOAD_ERR_EXTENSION:
+            $message = "File upload stopped by extension";
+            break;
+          default:
+            $message = "Unknown upload error";
+            break;
+        }
+        echo $message;
+        exit;
+      }
+    } else {
+      http_response_code(500);
+      echo "Error: No File Received, Upload Failed.";
+      exit;
+    }
+    break;
+  case 'downloadfile':
+    $filepath = merge_paths(UPLOAD_FOLDER, $username, $filename);
+    if (file_exists($filepath)) {
+      header('Content-Description: File Transfer');
+      header('Content-Type: application/octet-stream');
+      header("Content-Transfer-Encoding: Binary");
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate');
+      header('Pragma: public');
+      header("Content-Length: " . filesize($filepath));
+      readfile($filepath);
+    } else {
+      http_response_code(500);
+      echo "Error: Requested File does not Exists, Download Failed.";
+      exit;
+    }
+    break;
   case 'save':
     $load_sql = "SELECT * FROM saves WHERE user_id='" . $user['ID'] . "' AND data_key='$data_key'";
     $result = $mysqli->query($load_sql);

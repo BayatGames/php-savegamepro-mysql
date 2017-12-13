@@ -27,6 +27,11 @@
       <label for="db_pass">Database Password</label>
       <input type="password" class="form-control" id="db_pass" name="db_pass" placeholder="Password">
     </div>
+    <div class="form-group">
+      <label for="upload_folder">Upload Folder</label>
+      <input type="text" class="form-control" id="upload_folder" name="upload_folder" placeholder="e.g. <?php echo dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR; ?>" value="<?php echo dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR; ?>">
+      <small id="upload_folder_help" class="form-text text-muted">We need the absolute path to the folder, for example <?php echo dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR; ?>, and the path should end with a Slash, otherwise it won't work, current OS slash is <?php echo DIRECTORY_SEPARATOR; ?></small>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
