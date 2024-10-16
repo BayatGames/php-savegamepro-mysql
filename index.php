@@ -233,6 +233,21 @@ switch ($action) {
     $mysqli->close();
     exit("User Data Successfully Deleted");
     break;
+  case 'deleteaccount':
+    $delete_sql = "DELETE FROM users WHERE ID='" . $user['ID'] . "'";
+    $result = $mysqli->query($delete_sql);
+    if (!$result) {
+      http_response_code(500);
+      echo "Error: Failed to Execute Query, here is why: \n";
+      echo "Query: " . $delete_sql . "\n";
+      echo "Errno: " . $mysqli->errno . "\n";
+      echo "Error: " . $mysqli->error . "\n";
+      exit;
+    }
+    http_response_code(200);
+    $mysqli->close();
+    exit("User Account Successfully Deleted");
+    break;
   case 'clear':
     $clear_sql = "DELETE FROM saves WHERE user_id='" . $user['ID'] . "'";
     $result = $mysqli->query($clear_sql);
